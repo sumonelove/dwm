@@ -16,7 +16,7 @@ static const int showsystray        = 1;        /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const unsigned int gappx     = 6;        /* gaps between windows */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "JetBrains Mono:size=15", "NotoColorEmoji:pixelsize=15:antialias=true:autohint=true", "JoyPixels:pixelsize=20:antialias=true:autohintl=true"};
+static const char *fonts[]          = { "JetBrains Mono:size=15", "NotoColorEmoji:pixelsize=12:antialias=true:autohint=true", "JoyPixels:pixelsize=20:antialias=true:autohintl=true"};
 static const char dmenufont[]       = "JetBrains Mono:size=15";
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
@@ -33,7 +33,7 @@ static char *colors[][3] = {
 /* tagging */
 //static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 //static const char *tags[] = { "", "", "","","","", "", "", "" };
-static const char *tags[] =   { "","", "", "", "","","","", "" };
+static const char *tags[] =   { "","", "", "", "","","","", "" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -42,12 +42,8 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "firefox",  NULL,       NULL,       2,            0,           -1 },
-	{ "Brave-browser",    NULL,       NULL,    1 << 2,       0,           -1 },
-	{ "code-oss",         NULL,       NULL,    1 << 3,       0,           -1 },
-	{ "TelegramDesktop",  NULL,       NULL,    1 << 4,       0,           -1 },
-        { "Virt-manager",     NULL,       NULL,    1 << 7,       0,           -1 },	
-
+	{ "Firefox",  NULL,       NULL,       2,            0,           -1 },
+	{ "brave",    NULL,       NULL,       3,            0,           -1 },
 };
 
 /* layout(s) */
@@ -112,7 +108,6 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_t,       spawn,         {.v = telegram } },
 	{ MODKEY|ShiftMask,             XK_d,       spawn,         {.v = discord } },
 	{ MODKEY|ShiftMask,             XK_b,       spawn,         {.v = boxes } },
-	{ MODKEY|ShiftMask,             XK_l,       spawn,         SHCMD("slock")},
 	{ MODKEY,                       XK_m,      togglebar,      {0} },
 	{ MODKEY|ShiftMask,             XK_h,      setcfact,       {.f = +0.25} },
         { MODKEY|ShiftMask,             XK_l,      setcfact,       {.f = -0.25} },
@@ -124,7 +119,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY,                       XK_z,      zoom,           {0} },
-	{ MODKEY,                       XK_Tab,    view,           {0} },
+	{ MODKEY,                       XK_Tab,    view,           {0} }
 	{ MODKEY,                       XK_q,      killclient,     {0} },
 	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[1]} },
