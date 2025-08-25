@@ -1,5 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
+
 /* appearance */
 static const unsigned int borderpx  = 2;        /* border pixel of windows */
 static const unsigned int snap      = 50;       /* snap pixel */
@@ -16,7 +18,7 @@ static const int showsystray        = 1;        /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const unsigned int gappx     = 5;        /* gaps between windows */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = { "JetBrains Mono:size=15", "NotoColorEmoji:pixelsize=15:antialias=true:autohint=true", "JoyPixels:pixelsize=20:antialias=true:autohintl=true"};
+static const char *fonts[]          = { "JetBrains Mono:size=15","JetBrainsMono Nerd Font:size=15","NotoColorEmoji:pixelsize=15:antialias=true:autohint=true", "JoyPixels:pixelsize=20:antialias=true:autohint=true", "Font Awesome 7 Free:size=15:antialias=true:autohint=true", "Font Awesome 7 Brands Regular:size=15"};
 static const char dmenufont[]       = "JetBrains Mono:size=15";
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
@@ -33,7 +35,7 @@ static char *colors[][3] = {
 /* tagging */
 //static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 //static const char *tags[] = { "", "", "","","","", "", "", "" };
-static const char *tags[] =   { "#!","󰈹", "", "", "","󱥶","","󰃔", "" };
+static const char *tags[] =   { "#!","󰈹","","","","","","󰃔","" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -42,8 +44,8 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-	{ "firefox",  NULL,       NULL,       2,            0,           -1 },
-	{ "Brave-browser",    NULL,       NULL,    1 << 2,       0,           -1 },
+	{ "brave-browser",  NULL,       NULL,       2,            0,           -1 },
+/*	{ "brave-browser",    NULL,       NULL,    1 << 2,       0,           -1 }, */
 	{ "code-oss",         NULL,       NULL,    1 << 3,       0,           -1 },
 	{ "TelegramDesktop",  NULL,       NULL,    1 << 4,       0,           -1 },
         { "Virt-manager",     NULL,       NULL,    1 << 7,       0,           -1 },	
@@ -55,6 +57,7 @@ static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] 
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 static const int lockfullscreen = 1; /* 1 will force focus on the fullscreen window */
+static const int refreshrate = 120;  /* refresh rate (per second) for client move/resize */
 
 #define FORCE_VSPLIT 1  /* nrowgrid layout: force two clients to always split vertically */
 #include "vanitygaps.c"
@@ -80,7 +83,7 @@ static const Layout layouts[] = {
 
 /* key definitions */
 #define MODKEY Mod4Mask
-//#define ALTKEY Mod1Mask
+#define ALTKEY Mod1Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -92,27 +95,29 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu.sh" };
+static const char *menucmd[] = { "dmenu_run", NULL };
+static const char *rofi[] = { "rofi", "-show", "drun", "-show-icons", NULL };
 static const char *termcmd[]  = { "st", NULL };
 static const char *brave[] = { "brave", NULL};
-static const char *firefox[] = { "firefox", NULL };
 static const char *vscode[] = { "code", NULL };
 static const char *telegram[] = { "telegram-desktop", NULL };
 static const char *discord[] = { "discord", NULL };
 static const char *boxes[] = { "virt-manager", NULL };
 static const char *powermenu[] = {"powermenu.sh", NULL };
 
+
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_space,  spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_space,  spawn,          {.v = menucmd } },
+	{ ALTKEY,                       XK_space,  spawn,          {.v = rofi } },
 	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_o,       spawn,         {.v = vscode } },
-	{ MODKEY|ShiftMask,             XK_w,       spawn,         {.v = brave } },
-	{ MODKEY,                       XK_w,       spawn,         {.v = firefox } },
+	{ MODKEY,                       XK_w,       spawn,         {.v = brave } },
 	{ MODKEY|ShiftMask,             XK_t,       spawn,         {.v = telegram } },
 	{ MODKEY|ShiftMask,             XK_d,       spawn,         {.v = discord } },
 	{ MODKEY|ShiftMask,             XK_b,       spawn,         {.v = boxes } },
 	{ MODKEY|ShiftMask,             XK_l,       spawn,         SHCMD("slock")},
+	{ MODKEY,                       XK_n,       spawn,         SHCMD("xterm -e nmtui-connect") },
 	{ MODKEY,                       XK_m,      togglebar,      {0} },
 	{ MODKEY|ShiftMask,             XK_h,      setcfact,       {.f = +0.25} },
         { MODKEY|ShiftMask,             XK_l,      setcfact,       {.f = -0.25} },
@@ -166,6 +171,12 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_9,                      8)
        { MODKEY|ShiftMask,		XK_q,      quit,           {0} },
        { MODKEY,                       XK_p,      spawn,          {.v = powermenu} },
+
+       { 0, XF86XK_AudioLowerVolume, spawn, SHCMD("vol.sh down") },
+       { 0, XF86XK_AudioRaiseVolume, spawn, SHCMD("vol.sh up") },
+       { 0, XF86XK_AudioMute,        spawn, SHCMD("vol.sh mute") },
+
+
 };
 
 /* button definitions */
@@ -176,12 +187,14 @@ static const Button buttons[] = {
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
 	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
 	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
-	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
-	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
-	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
+	{ ClkClientWin,         Mod1Mask,      Button1,        movemouse,      {0} },
+	{ ClkClientWin,         Mod1Mask,      Button2,        togglefloating, {0} },
+	{ ClkClientWin,         Mod1Mask,      Button3,        resizemouse,    {0} },
 	{ ClkTagBar,            0,              Button1,        view,           {0} },
 	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
+
+
 
